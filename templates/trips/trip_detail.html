@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ trip.get_transport_type_display }} - {{ trip.source_city }} to {{ trip.destination_city }}{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-2">Trip Details</h1>
+
+<div class="card trip-detail-card">
+  <div class="card-body">
+    <h2 class="card-title">{{ trip.get_transport_type_display }}: {{ trip.source_city.name }} → {{ trip.destination_city.name }}</h2>
+    <p class="card-desc mt-1">
+      <strong>Date:</strong> {{ trip.date }} &nbsp;|&nbsp; <strong>Time:</strong> {{ trip.time|time:"H:i" }}<br>
+      <strong>Available seats:</strong> {{ trip.available_seats }} &nbsp;|&nbsp; <strong>Price per seat:</strong> ₹{{ trip.price }}
+    </p>
+
+    {% if user.is_authenticated %}
+      {% if trip.available_seats > 0 %}
+      <form method="post" action="{% url 'bookings:create' trip.id %}" class="seat-form">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="seats">Number of seats</label>
+          <input type="number" name="seats" id="seats" class="form-input" min="1" max="{{ trip.available_seats }}" value="1" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+      </form>
+      {% else %}
+      <p class="mt-2">No seats available for this trip.</p>
+      {% endif %}
+    {% else %}
+    <p class="mt-2"><a href="{% url 'accounts:login' %}?next={{ request.path }}">Log in</a> to book this trip.</p>
+    {% endif %}
+  </div>
+</div>
+
+<a href="{% url 'trips:search' %}" class="btn btn-secondary">← Back to Search</a>
+{% endblock %}

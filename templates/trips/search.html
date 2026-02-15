@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Trips - HBooking{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-2">Search Trips</h1>
+
+<section class="search-section">
+  <h2>Where do you want to go?</h2>
+  <form method="get" action="{% url 'trips:search' %}" class="search-form" id="searchForm">
+    <div class="form-group">
+      <label for="transport_type">Transport</label>
+      <select name="transport_type" id="transport_type" class="form-input" required>
+        <option value="">Select</option>
+        <option value="bus" {% if transport_type == 'bus' %}selected{% endif %}>Bus</option>
+        <option value="train" {% if transport_type == 'train' %}selected{% endif %}>Train</option>
+        <option value="flight" {% if transport_type == 'flight' %}selected{% endif %}>Flight</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="source_state">From State</label>
+      <select name="source_state" id="source_state" class="form-input">
+        <option value="">Select state</option>
+        {% for state in states %}
+        <option value="{{ state.id }}">{{ state.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="source_city">From City</label>
+      <select name="source_city" id="source_city" class="form-input" disabled>
+        <option value="">Select city</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="dest_state">To State</label>
+      <select name="dest_state" id="dest_state" class="form-input">
+        <option value="">Select state</option>
+        {% for state in states %}
+        <option value="{{ state.id }}">{{ state.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="destination_city">To City</label>
+      <select name="destination_city" id="destination_city" class="form-input" disabled>
+        <option value="">Select city</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="date">Date</label>
+      <input type="date" name="date" id="date" class="form-input" value="{{ date }}" required>
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+  </form>
+</section>
+
+{% if trips %}
+<h2 class="mb-2">Available Trips</h2>
+<div class="trip-list">
+  {% for trip in trips %}
+  <div class="trip-item">
+    <div class="trip-meta">
+      <span class="trip-route">{{ trip.source_city.name }} → {{ trip.destination_city.name }}</span>
+      <span class="trip-time">{{ trip.time|time:"H:i" }}</span>
+      <span class="trip-seats">{{ trip.available_seats }} seats left</span>
+      <span class="trip-price">₹{{ trip.price }}/seat</span>
+    </div>
+    <a href="{% url 'trips:trip_detail' trip.pk %}" class="btn btn-primary">Select</a>
+  </div>
+  {% endfor %}
+</div>
+{% elif transport_type and source_id and dest_id and date %}
+<p class="text-center empty-state">No trips found for this route and date. Try another search.</p>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+  var citiesUrl = '{% url "locations:cities_by_state" %}';
+  var sourceState = document.getElementById('source_state');
+  var sourceCity = document.getElementById('source_city');
+  var destState = document.getElementById('dest_state');
+  var destCity = document.getElementById('destination_city');
+
+  function loadCities(stateSelect, citySelect, selectedId) {
+    var stateId = stateSelect.value;
+    citySelect.innerHTML = '<option value="">Select city</option>';
+    citySelect.disabled = !stateId;
+    if (!stateId) return;
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', citiesUrl + '?state_id=' + stateId, true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        var data = JSON.parse(xhr.responseText);
+        data.cities.forEach(function(c) {
+          var opt = document.createElement('option');
+          opt.value = c.id;
+          opt.textContent = c.name;
+          if (selectedId && c.id == selectedId) opt.selected = true;
+          citySelect.appendChild(opt);
+        });
+      }
+    };
+    xhr.send();
+  }
+
+  sourceState.addEventListener('change', function() {
+    loadCities(sourceState, sourceCity, null);
+  });
+  destState.addEventListener('change', function() {
+    loadCities(destState, destCity, null);
+  });
+
+  // Restore from query params / server context
+  var srcStateId = '{{ source_state_id }}';
+  var srcCityId = '{{ source_id }}';
+  var dStateId = '{{ dest_state_id }}';
+  var dCityId = '{{ dest_id }}';
+
+  if (srcStateId) {
+    sourceState.value = srcStateId;
+    loadCities(sourceState, sourceCity, srcCityId);
+  }
+  if (dStateId) {
+    destState.value = dStateId;
+    loadCities(destState, destCity, dCityId);
+  }
+})();
+</script>
+{% endblock %}

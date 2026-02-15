@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment - HBooking{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-2">Complete Payment</h1>
+
+<div class="card payment-card">
+  <div class="card-body">
+    <h2 class="card-title">Booking Summary</h2>
+    <div class="payment-summary">
+      <p><strong>Trip:</strong> {{ booking.trip.get_transport_type_display }} — {{ booking.trip.source_city.name }} to {{ booking.trip.destination_city.name }}</p>
+      <p><strong>Date & time:</strong> {{ booking.trip.date }} at {{ booking.trip.time|time:"H:i" }}</p>
+      <p><strong>Seats:</strong> {{ booking.seats }}</p>
+      <p class="total">Total: ₹{{ booking.total_price }}</p>
+    </div>
+    <p class="card-desc">This is a simulated payment. Click "Pay Now" to confirm.</p>
+    <form method="post" action="">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary" style="width:100%;">Pay Now</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

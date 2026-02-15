@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}HBooking - Book Bus, Train & Flight{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>Book Your Journey</h1>
+  <p>Choose from bus, train, or flight. Search by route and date, then book in a few clicks.</p>
+</section>
+
+<div class="transport-grid">
+  <article class="transport-card card">
+    <img class="card-image" src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&h=400&fit=crop" alt="Bus travel">
+    <div class="card-body">
+      <h2 class="card-title">Bus</h2>
+      <p class="card-desc">Comfortable and affordable bus rides across states. Book seats and travel with ease.</p>
+      <a href="{% url 'trips:search' %}?transport_type=bus" class="btn btn-primary">Book Now</a>
+    </div>
+  </article>
+  <article class="transport-card card">
+    <img class="card-image" src="https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=600&h=400&fit=crop" alt="Train travel">
+    <div class="card-body">
+      <h2 class="card-title">Train</h2>
+      <p class="card-desc">Reliable train connections between cities. Check schedules and reserve your seat.</p>
+      <a href="{% url 'trips:search' %}?transport_type=train" class="btn btn-primary">Book Now</a>
+    </div>
+  </article>
+  <article class="transport-card card">
+    <img class="card-image" src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&h=400&fit=crop" alt="Flight travel">
+    <div class="card-body">
+      <h2 class="card-title">Flight</h2>
+      <p class="card-desc">Fast and convenient flights. Compare options and book your next trip.</p>
+      <a href="{% url 'trips:search' %}?transport_type=flight" class="btn btn-primary">Book Now</a>
+    </div>
+  </article>
+</div>
+{% endblock %}
