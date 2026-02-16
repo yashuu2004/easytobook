@@ -1,18 +1,33 @@
-{% extends 'base.html' %}
-
-{% block title %}Booking Confirmed - HBooking{% endblock %}
+{% extends "base.html" %}
 
 {% block content %}
-<div class="success-card card">
-  <div class="card-body">
-    <div class="success-icon">✓</div>
-    <h1 class="card-title">Booking Confirmed</h1>
-    <p class="card-desc mt-2">A confirmation email has been sent to {{ request.user.email }}.</p>
-    <div class="payment-summary mt-2">
-      <p><strong>{{ booking.trip.get_transport_type_display }}</strong>: {{ booking.trip.source_city.name }} → {{ booking.trip.destination_city.name }}</p>
-      <p>{{ booking.trip.date }} at {{ booking.trip.time|time:"H:i" }} · {{ booking.seats }} seat(s) · ₹{{ booking.total_price }}</p>
+
+<div class="confirm-wrapper">
+
+  <div class="confirm-card">
+
+    <div class="checkmark-circle">
+      <div class="checkmark">✓</div>
     </div>
-    <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary mt-2">View My Bookings</a>
+
+    <h2>Booking Confirmed</h2>
+    <p>Your trip is successfully booked.</p>
+
+    <div class="summary">
+      <p><strong>Route:</strong>
+        {{ booking.trip.source_city }} → {{ booking.trip.destination_city }}
+      </p>
+      <p><strong>Date:</strong> {{ booking.trip.date }}</p>
+      <p><strong>Seats:</strong> {{ booking.selected_seats }}</p>
+      <p><strong>Total Paid:</strong> ₹{{ booking.total_price }}</p>
+    </div>
+
+    <a href="{% url 'bookings:ticket' booking.id %}" class="btn btn-primary">
+      View Ticket
+    </a>
+
   </div>
+
 </div>
+
 {% endblock %}

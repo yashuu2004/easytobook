@@ -39,7 +39,8 @@ def login_view(request):
 @require_http_methods(['POST', 'GET'])
 def logout_view(request):
     logout(request)
-    return redirect('home')
+    return redirect('accounts:login')
+
 
 
 @login_required

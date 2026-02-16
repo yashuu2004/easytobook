@@ -1,36 +1,132 @@
-{% extends 'base.html' %}
-
-{% block title %}{{ trip.get_transport_type_display }} - {{ trip.source_city }} to {{ trip.destination_city }}{% endblock %}
+{% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-<h1 class="text-center mb-2">Trip Details</h1>
 
 <div class="card trip-detail-card">
   <div class="card-body">
-    <h2 class="card-title">{{ trip.get_transport_type_display }}: {{ trip.source_city.name }} → {{ trip.destination_city.name }}</h2>
+
+    <h2 class="card-title">
+      {{ trip.get_transport_type_display }}:
+      {{ trip.source_city.name }} → {{ trip.destination_city.name }}
+    </h2>
+
     <p class="card-desc mt-1">
-      <strong>Date:</strong> {{ trip.date }} &nbsp;|&nbsp; <strong>Time:</strong> {{ trip.time|time:"H:i" }}<br>
-      <strong>Available seats:</strong> {{ trip.available_seats }} &nbsp;|&nbsp; <strong>Price per seat:</strong> ₹{{ trip.price }}
+      <strong>Date:</strong> {{ trip.date }} |
+      <strong>Time:</strong> {{ trip.time }} <br>
+      <strong>Available seats:</strong> {{ trip.available_seats }} |
+      <strong>Price:</strong> ₹{{ trip.price }}
     </p>
 
-    {% if user.is_authenticated %}
-      {% if trip.available_seats > 0 %}
-      <form method="post" action="{% url 'bookings:create' trip.id %}" class="seat-form">
-        {% csrf_token %}
-        <div class="form-group">
-          <label for="seats">Number of seats</label>
-          <input type="number" name="seats" id="seats" class="form-input" min="1" max="{{ trip.available_seats }}" value="1" required>
+    <!-- ⭐ Seat legend -->
+    <div style="margin-bottom:15px;">
+      <span style="margin-right:20px;">🟩 Available</span>
+      <span style="margin-right:20px;">🟪 Selected</span>
+      <span>🟥 Booked</span>
+    </div>
+
+    <form method="post"
+          action="{% url 'bookings:create' trip.id %}"
+          class="seat-form">
+      {% csrf_token %}
+
+      <h4>Select Seats</h4>
+
+      <div class="bus-layout">
+
+        {% for row in "ABCDE" %}
+        <div class="seat-row">
+
+          {% for num in "12" %}
+          {% with seat=row|add:num %}
+          <label class="seat {% if seat in booked_seats %}booked{% endif %}">
+            <input type="checkbox"
+                   name="seats_selected"
+                   value="{{ seat }}"
+                   {% if seat in booked_seats %}disabled{% endif %}>
+            <span>{{ seat }}</span>
+          </label>
+          {% endwith %}
+          {% endfor %}
+
+          <div class="aisle"></div>
+
+          {% for num in "34" %}
+          {% with seat=row|add:num %}
+          <label class="seat {% if seat in booked_seats %}booked{% endif %}">
+            <input type="checkbox"
+                   name="seats_selected"
+                   value="{{ seat }}"
+                   {% if seat in booked_seats %}disabled{% endif %}>
+            <span>{{ seat }}</span>
+          </label>
+          {% endwith %}
+          {% endfor %}
+
         </div>
-        <button type="submit" class="btn btn-primary">Proceed to Payment</button>
-      </form>
-      {% else %}
-      <p class="mt-2">No seats available for this trip.</p>
-      {% endif %}
-    {% else %}
-    <p class="mt-2"><a href="{% url 'accounts:login' %}?next={{ request.path }}">Log in</a> to book this trip.</p>
-    {% endif %}
+        {% endfor %}
+
+      </div>
+
+      <!-- ⭐ Live counter -->
+      <p id="seatCount" class="mt-2">Seats selected: 0</p>
+      <p id="totalPrice">Total: ₹0</p>
+     
+   <h4>Passenger Details</h4>
+   <div id="passengerForms"></div>
+      <button type="submit" class="btn btn-primary mt-2">
+        Proceed to Payment
+      </button>
+<hr>
+
+
+
+    </form>
+
   </div>
 </div>
 
-<a href="{% url 'trips:search' %}" class="btn btn-secondary">← Back to Search</a>
+<a href="{% url 'trips:search' %}" class="btn btn-secondary mt-2">
+  ← Back to Search
+</a>
+
+<!-- ⭐ Live seat JS -->
+<script>
+const price = {{ trip.price }};
+const checkboxes = document.querySelectorAll('input[name="seats_selected"]');
+const countEl = document.getElementById('seatCount');
+const totalEl = document.getElementById('totalPrice');
+const passengerDiv = document.getElementById('passengerForms');
+
+function updatePassengers() {
+  passengerDiv.innerHTML = "";
+
+  const selectedSeats = document.querySelectorAll('input[name="seats_selected"]:checked');
+
+  selectedSeats.forEach(seat => {
+    const seatName = seat.value;
+
+    const div = document.createElement("div");
+    div.style.marginBottom = "10px";
+
+    div.innerHTML = `
+      <label>${seatName} Passenger Name:</label>
+      <input type="text" name="passenger_${seatName}" required class="form-input">
+    `;
+
+    passengerDiv.appendChild(div);
+  });
+}
+
+checkboxes.forEach(cb => {
+  cb.addEventListener('change', () => {
+    const selected = document.querySelectorAll('input[name="seats_selected"]:checked').length;
+    countEl.textContent = "Seats selected: " + selected;
+    totalEl.textContent = "Total: ₹" + (selected * price);
+    updatePassengers();
+  });
+});
+</script>
+
+
 {% endblock %}

@@ -4,15 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}HBooking{% endblock %}</title>
+    <title>{% block title %}Easytobook{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar">
-        <a href="{% url 'trips:home' %}" class="nav-brand">HBooking</a>
+        <a href="{% url 'trips:home' %}" class="nav-brand">Easytobook</a>
         <ul class="nav-links">
             <li><a href="{% url 'trips:home' %}">Home</a></li>
             <li><a href="{% url 'trips:search' %}">Services</a></li>
@@ -42,7 +43,7 @@
     </main>
 
     <footer class="footer">
-        <p>&copy; {% now "Y" %} HBooking. Travel with ease.</p>
+        <p>&copy; {% now "Y" %} Easytobook. Travel with ease.</p>
     </footer>
     <script src="{% static 'js/main.js' %}"></script>
     {% block extra_js %}{% endblock %}

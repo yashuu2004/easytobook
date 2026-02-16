@@ -42,5 +42,5 @@ def payment_view(request, booking_id):
 def payment_success_view(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id, user=request.user)
     if not booking.is_paid:
-        return redirect('payments:payment', booking_id=booking_id)
+        return render(request, 'payments/success.html', {'booking': booking})
     return render(request, 'payments/success.html', {'booking': booking})
