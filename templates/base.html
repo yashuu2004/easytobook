@@ -16,9 +16,9 @@
         <a href="{% url 'trips:home' %}" class="nav-brand">Easytobook</a>
         <ul class="nav-links">
             <li><a href="{% url 'trips:home' %}">Home</a></li>
-            <li><a href="{% url 'trips:search' %}">Services</a></li>
+            <a href="{% url 'trips:contact' %}">Contact</a>
             {% if user.is_authenticated %}
-                <li><a href="{% url 'accounts:dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'accounts:dashboard' %}">Histroy</a></li>
                 <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
             {% else %}
                 <li><a href="{% url 'accounts:login' %}">Login</a></li>

@@ -10,7 +10,7 @@ SECRET_KEY = 'django-insecure-dev-key-change-in-production'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -95,7 +95,12 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = 'yashuuyashwanth8@gmail.com'
-EMAIL_HOST_PASSWORD = 'tsqw laiv iyah lbvk'
+EMAIL_HOST_USER = 'easytobook.team@gmail.com'
+EMAIL_HOST_PASSWORD = 'bbiq vhub cxiu avqj'
 
 DEFAULT_FROM_EMAIL = 'Easytobook <yashuuyashwanth8@gmail.com>'
+
+
+#razorpay for payments
+RAZORPAY_KEY_ID = "rzp_test_SHFbeC3VFQGYSU"
+RAZORPAY_KEY_SECRET = "PMFWgng6zy9J6U3461mNTUE8"

@@ -7,7 +7,10 @@
 
 <section class="search-section">
   <h2>Where do you want to go?</h2>
-  <form method="get" action="{% url 'trips:search' %}" class="search-form" id="searchForm">
+<form method="get" action="{% url 'trips:search' %}" class="search-form" id="searchForm">
+
+  <!-- Row 1 -->
+  <div class="form-row full">
     <div class="form-group">
       <label for="transport_type">Transport</label>
       <select name="transport_type" id="transport_type" class="form-input" required>
@@ -17,6 +20,10 @@
         <option value="flight" {% if transport_type == 'flight' %}selected{% endif %}>Flight</option>
       </select>
     </div>
+  </div>
+
+  <!-- Row 2 -->
+  <div class="form-row">
     <div class="form-group">
       <label for="source_state">From State</label>
       <select name="source_state" id="source_state" class="form-input">
@@ -26,12 +33,17 @@
         {% endfor %}
       </select>
     </div>
+
     <div class="form-group">
       <label for="source_city">From City</label>
       <select name="source_city" id="source_city" class="form-input" disabled>
         <option value="">Select city</option>
       </select>
     </div>
+  </div>
+
+  <!-- Row 3 -->
+  <div class="form-row">
     <div class="form-group">
       <label for="dest_state">To State</label>
       <select name="dest_state" id="dest_state" class="form-input">
@@ -41,20 +53,29 @@
         {% endfor %}
       </select>
     </div>
+
     <div class="form-group">
       <label for="destination_city">To City</label>
       <select name="destination_city" id="destination_city" class="form-input" disabled>
         <option value="">Select city</option>
       </select>
     </div>
+  </div>
+
+  <!-- Row 4 -->
+  <div class="form-row">
     <div class="form-group">
       <label for="date">Date</label>
       <input type="date" name="date" id="date" class="form-input" value="{{ date }}" required>
     </div>
-    <div class="form-group">
+
+    <div class="form-group btn-align">
       <button type="submit" class="btn btn-primary">Search</button>
     </div>
-  </form>
+  </div>
+
+</form>
+
 </section>
 
 {% if trips %}

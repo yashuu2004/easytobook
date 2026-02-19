@@ -8,17 +8,49 @@
 <div class="card payment-card">
   <div class="card-body">
     <h2 class="card-title">Booking Summary</h2>
+
     <div class="payment-summary">
       <p><strong>Trip:</strong> {{ booking.trip.get_transport_type_display }} — {{ booking.trip.source_city.name }} to {{ booking.trip.destination_city.name }}</p>
       <p><strong>Date & time:</strong> {{ booking.trip.date }} at {{ booking.trip.time|time:"H:i" }}</p>
       <p><strong>Seats:</strong> {{ booking.seats }}</p>
       <p class="total">Total: ₹{{ booking.total_price }}</p>
     </div>
-    <p class="card-desc">This is a simulated payment. Click "Pay Now" to confirm.</p>
-    <form method="post" action="">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-primary" style="width:100%;">Pay Now</button>
-    </form>
+
+    <p class="card-desc">Secure payment via Razorpay.</p>
+
+    <button id="rzp-button" class="btn btn-primary" style="width:100%;">
+      Pay Now
+    </button>
+
   </div>
 </div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+var options = {
+    "key": "{{ razorpay_key }}",
+    "amount": "{{ booking.total_price|floatformat:0 }}00",
+    "currency": "INR",
+    "name": "Easytobook",
+    "description": "Trip Payment",
+    "order_id": "{{ razorpay_order_id }}",
+
+    "handler": function (response){
+        window.location.href = "/payments/{{ booking.id }}/success/";
+    },
+
+    "theme": {
+        "color": "#6366f1"
+    }
+};
+
+var rzp1 = new Razorpay(options);
+
+document.getElementById('rzp-button').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+</script>
+
+
 {% endblock %}

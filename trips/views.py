@@ -133,3 +133,7 @@ def trip_detail_view(request, pk):
     }
 
     return render(request, "trips/trip_detail.html", context)
+from django.shortcuts import render
+
+def contact(request):
+    return render(request, 'contact.html')
